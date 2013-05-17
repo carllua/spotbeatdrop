@@ -1,0 +1,71 @@
+html {
+	font-size: 12px;
+}
+
+a {
+	text-decoration: none;
+	color: #FFFFFF;
+}
+
+th {
+	height: 25px;
+}
+
+th.headerSortDown, th.headerSortUp, th:hover {
+	background-color: #9090FF;
+	color: #202020;	
+}
+
+body {
+	background-color: #202020;
+	font-family: Verdana, Arial, Helvetica;
+	color: #A0A0A0;
+}
+
+table { 
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+	
+div, td, input {
+	font-size: 12px;
+}
+
+#devtext {
+	width: 100%;
+}
+
+#droptarget {
+	height: 50px;
+	text-align: center;
+	background-color: #303030;
+}
+
+#droptarget.activated {
+	background-color: #404040;
+}
+
+td.released {
+	width: 75px;
+}
+
+#results th, td {
+	text-align: left;
+	padding: 0 10px 0 2px;
+}
+
+.exclusive {
+	color: #404040;
+}
+
+.matched {
+	background-color: #303030;
+}
+
+.template {
+	display: none;
+}
+
+.result {
+	
+}

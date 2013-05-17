@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+<title>Spot the BeatDrop</title>
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="scripts/jquery.tablesorter.min.js"></script>
+<script src="scripts/formatter.js"></script>
+<script src="scripts/scrubber.js"></script>
+<script src="scripts/spotify.js"></script>
+<script src="scripts/beatport.js"></script>
+<script>
+$(function(){
+	var tablesorted = false;
+	function populateGenres (json) {
+		$(json.results).each(function(){
+			$("#beatportGenres").append("<option value=\"" + this.id + "\">" + this.name + "</option>")
+		});
+	}
+	
+	function populateTable (json) {
+		formatter.clearTable();
+		formatter.applyBeatport(json.results);
+		if (!tablesorted) {	
+			$("#results").tablesorter();
+			tablesorted = true;
+		} else {
+			$("#results").trigger("update");
+		}
+	}
+	
+	beatport.genres(populateGenres);
+	beatport.popularSongs(populateTable);
+	
+	$("#beatportGenres").change(function(){
+		var id = $(this).val();
+		beatport.popularSongsGenre(populateTable, id);
+	});
+
+});
+</script>
+</head>
+
+<body>
+<select id="beatportGenres">
+	<option value="" />
+</select>
+<table id="results">
+<thead>	
+<tr id="resultHeader">
+		<th colspan="2">Rank</th>
+		<th>Title</th>
+		<th>Mix</th>
+		<th>Artist</th>
+		<th>Album</th>
+		<th>Popularity</th>
+		<th>Released</th>
+		<th>BPM</th>
+		<th>Length</th>
+		<th>Genre</th>
+	</tr>
+</thead>
+<tbody>
+	<tr id="resultTemplate" class="template">
+		<td class="index"></td>
+		<td class="image"></td>
+		<td class="title"></td>
+		<td class="mix"></td>
+		<td class="artists"></td>
+		<td class="album"></td>
+		<td class="popularity"></td>
+		<td class="released"></td>
+		<td class="bpm"></td>
+		<td class="length"></td>
+		<td class="genre"></td>
+	</tr>
+</tbody>
+</table>
+</body>
+</html>

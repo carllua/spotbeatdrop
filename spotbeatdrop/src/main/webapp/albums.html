@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+<title>Spot the BeatDrop</title>
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="scripts/formatter.js"></script>
+<script src="scripts/spotify.js"></script>
+<script src="scripts/beatport.js"></script>
+<script>
+$(function(){
+	function populateGenres (json) {
+		$(json.results).each(function(){
+			$("#beatportGenres").append("<option value=\"" + this.id + "\">" + this.name + "</option>")
+		});
+	}
+	
+	function populateTable (json) {
+		formatter.clearTable();
+		formatter.applyBeatportAlbums(json.results);
+	}
+	
+	beatport.genres(populateGenres);
+	beatport.popular(populateTable);
+	
+	$("#beatportGenres").change(function(){
+		var id = $(this).val();
+		beatport.popularGenre(populateTable, id);
+	});
+});
+</script>
+</head>
+
+<body>
+<select id="beatportGenres">
+	<option value="" />
+</select>
+<table id="results">
+	<tr id="resultHeader">
+		<th></th>
+		<th></th>
+		<th>Album</th>
+		<th>Artist</th>
+		<th>Released</th>
+		<th>Length</th>
+		<th>Genre</th>
+	</tr>
+	<tr id="resultTemplate" class="template">
+		<td class="index"></td>
+		<td class="image"></td>
+		<td class="album"></td>
+		<td class="artists"></td>
+		<td class="released"></td>
+		<td class="length"></td>
+		<td class="genre"></td>
+	</tr>
+</table>
+</body>
+</html>

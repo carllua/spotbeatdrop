@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+<title>Spot the BeatDrop</title>
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="scripts/formatter.js"></script>
+<script src="scripts/spotify.js"></script>
+<script src="scripts/beatport.js"></script>
+<script>
+$(function() {
+  $("#search").click(function() {
+	  var link = $("#devtext").val();
+	  link = spotify.translateLink(link);
+	  spotify.lookup(link);
+	  //var query = $("#song").val();
+	  //var result = beatport.search(query);
+  });
+  
+  $("#droptarget").bind("drop", function(event){
+	  e.preventDefault();
+  });
+  
+  $("#droptarget").bind("dragover", function(e){
+	console.log(e);
+  });
+});
+</script>
+</head>
+
+<body>
+<textarea id="devtext"></textarea>
+<input type="button" id="search" value="Search" />
+
+<table id="results">
+	<tr id="resultHeader">
+		<th></th>
+		<th></th>
+		<th>Album</th>
+		<th>Artist</th>
+		<th>Length</th>
+		<th>BPM</th>
+		<th>Genre</th>
+	</tr>
+	<tr id="resultTemplate" class="template">
+		<td class="index"></td>
+		<td class="image"></td>
+		<td class="album"></td>
+		<td class="artists"></td>
+		<td class="length"></td>
+		<td class="bpm"></td>
+		<td class="genre"></td>
+	</tr>
+</table>
+</body>
+</html>
