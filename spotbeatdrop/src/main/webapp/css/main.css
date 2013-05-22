@@ -11,6 +11,10 @@ th {
 	height: 25px;
 }
 
+tr {
+	height: 32px;
+}
+
 th.headerSortDown, th.headerSortUp, th:hover {
 	background-color: #9090FF;
 	color: #202020;	
