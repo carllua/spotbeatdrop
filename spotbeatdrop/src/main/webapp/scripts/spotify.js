@@ -1,6 +1,6 @@
 
 var Spotify = function() {
-	this.lookup = function (query) {
+	this.lookup = function (query, index) {
 		$.ajax({
 			url: "http://ws.spotify.com/lookup/1/.json",
 			data: { uri: query },
@@ -8,11 +8,7 @@ var Spotify = function() {
 			dataType: "json",
 				
 			success: function (json) {
-				formatter.applySpotifyResponse(json);
-			},
-			
-			error: function () {
-				alert("oops");
+				formatter.applySpotifyResponse(json, index);
 			}
 		});
 	}
@@ -72,9 +68,9 @@ var Spotify = function() {
 			success: function (json) {
 				var nresults = json.info["num_results"];
 				if (nresults > 0) {
-					var nada = "";
 					var found = false;
-					var potential = null;
+					var result = null;
+					var nada = "";
 					
 					$(json.tracks).each(function(){
 						if (!found) {
@@ -82,27 +78,23 @@ var Spotify = function() {
 							var spisrc = spotify.id(this, "isrc");
 
 							if (spisrc == isrc) { 
-								nada = null;
 								found = true;
-								callback(this);
+								result = this;
 							
-							} else if (querymatch == query && potential == null) {
+							} else if (querymatch == query && result == null) {
 								console.log ("Potential Match: " + query + "/" + querymatch);
-								potential = this;
-								nada = null;
+								result = this;
 							
 							} else {
-								nada += ("\nNo Match: " + query + "/" + querymatch + ", isrc: " + spisrc + "/" + isrc);
+								nada += ("No Match: " + query + "/" + querymatch + ", isrc: " + spisrc + "/" + isrc + "\n");
 							}
 						}
 					});	
 					
-					if (potential != null) {
-						callback(potential);
-						
-					} else if (nada != null) {
-						console.log(nada);
+					if (result != null) {
+						callback(result);
 					}
+					
 				} else {
 					if (!exclusive) {
 						console.log("Zero Results: " + query);

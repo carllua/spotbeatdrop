@@ -6,26 +6,43 @@
 <title>Spot the BeatDrop</title>
 <link rel="stylesheet" type="text/css" href="css/main.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="scripts/jquery.tablesorter.min.js"></script>
 <script src="scripts/formatter.js"></script>
+<script src="scripts/scrubber.js"></script>
 <script src="scripts/spotify.js"></script>
 <script src="scripts/beatport.js"></script>
 <script>
 $(function() {
-  $("#search").click(function() {
-	  var link = $("#devtext").val();
-	  link = spotify.translateLink(link);
-	  spotify.lookup(link);
-	  //var query = $("#song").val();
-	  //var result = beatport.search(query);
-  });
-  
-  $("#droptarget").bind("drop", function(event){
-	  e.preventDefault();
-  });
-  
-  $("#droptarget").bind("dragover", function(e){
-	console.log(e);
-  });
+	$("#search").click(function() {
+		var ta = $("#devtext");
+		var startindex = ($("#results tr").length);
+
+		$(ta.val().split("\n")).each(function(index) {
+			if (this != "") {
+				spotify.lookup(spotify.translateLink(this), startindex + index);
+			}
+		});
+
+		ta.val("");
+	});
+
+	$("#playlist").click(function(e) {
+		e.preventDefault();
+		return false;
+	})
+	
+	$("#playlist").bind("mousedown", function(e) {
+		e.preventDefault();
+		formatter.createPlaylist();
+	});
+	
+	$("#droptarget").bind("drop", function(event) {
+		e.preventDefault();
+	});
+
+	$("#droptarget").bind("dragover", function(e) {
+		console.log(e);
+	});
 });
 </script>
 </head>
@@ -34,25 +51,39 @@ $(function() {
 <textarea id="devtext"></textarea>
 <input type="button" id="search" value="Search" />
 
+<a href="#" id="playlist">Playlist</a>
+
 <table id="results">
+
+<thead>
 	<tr id="resultHeader">
-		<th></th>
-		<th></th>
-		<th>Album</th>
+		<th colspan="2">Rank</th>
+		<th>Title</th>
+		<th>Mix</th>
 		<th>Artist</th>
-		<th>Length</th>
+		<th>Album</th>
+		<th>Popularity</th>
+		<th>Released</th>
 		<th>BPM</th>
+		<th>Length</th>
 		<th>Genre</th>
 	</tr>
+	</thead>
+	<tbody>
 	<tr id="resultTemplate" class="template">
 		<td class="index"></td>
 		<td class="image"></td>
-		<td class="album"></td>
+		<td class="title"></td>
+		<td class="mix"></td>
 		<td class="artists"></td>
-		<td class="length"></td>
+		<td class="album"></td>
+		<td class="popularity"></td>
+		<td class="released"></td>
 		<td class="bpm"></td>
+		<td class="length"></td>
 		<td class="genre"></td>
 	</tr>
+	</tbody>
 </table>
 </body>
 </html>

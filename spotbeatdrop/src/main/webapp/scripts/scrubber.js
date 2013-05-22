@@ -6,7 +6,7 @@ var Scrubber = function() {
 	}
 	
 	this.searchTitle = function(title, artists, mixname) {
-		if (mixname.indexOf("Original") > -1) {
+		if (!mixname || mixname.indexOf("Original") > -1) {
 			return (scrubber.lessCountries(artists[0].name) + " " + scrubber.lessFeatures(title)).toLowerCase(); 
 		
 		} else {
@@ -17,10 +17,6 @@ var Scrubber = function() {
 			
 			return (scrubber.lessCountries(artistquery) + " " + scrubber.lessFeatures(scrubber.lessDashes(title)) + " " + mixname).toLowerCase();
 		}
-	}
-	
-	this.artists = function(artists) {
-		
 	}
 	
 	this.scrubMix = function(mixname) {
@@ -47,6 +43,8 @@ var Scrubber = function() {
 	
 	this.lessFeatures = function(title) {
 		title = title.replace(/\([Ff]eat.*\)/g, "");
+		title = title.replace(/\([Ff]t.*\)/g, "");
+
 		var featloc = title.toLowerCase().indexOf(" feat.");
 		featloc = (featloc == -1) ? title.toLowerCase().indexOf("ft.") : featloc;
 		

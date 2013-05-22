@@ -1,6 +1,6 @@
 
 var Beatport = function() {
-	this.search = function (query) {
+	this.search = function (query, isrc) {
 		$.ajax({
 			url: "http://api.beatport.com/catalog/3/search",
 			data: { query: query },
@@ -9,13 +9,36 @@ var Beatport = function() {
 				
 			success: function (json) {
 				if (json.metadata.count > 0) {
-					formatter.applyBeatportResponse(json.results);
+					var found = false;
+					var result = null;
+					var nada = "";
+					
+					$(json.results).each(function(index){					
+						if (this.type == "track" && !found) {
+							var querymatch = scrubber.searchTitle(this.name, this.artists, this.mixName);
+
+							if (this.isrc == isrc) {
+								found = true;
+								result = this;
+								
+							} else if (query == querymatch && result == null) {
+								console.log ("Potential Match: {0}/{1}".format(query, querymatch));
+								result = this;
+								
+							} else {
+								console.log("No Match: {0}/{1} [isrc {2}{3}]\n".format(query, querymatch, this.isrc, isrc));
+							}
+						}
+					});
+					
+					if (result != null) {
+						formatter.applyBeatportResponse(result, isrc);
+					}
+					
+				} else {
+					console.log("Zero Results [ISRC {0}]: {1}".format(isrc, query));
 				}
-			}//,
-			
-//			error: function () {
-//				alert("oops");
-//			}
+			}
 		});
 	}
 

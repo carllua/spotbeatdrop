@@ -15,6 +15,16 @@ $(function() {
 	
 	function Formatter() {
 		var resultTemplate;
+		var tablesorted = false;
+
+		function sort() {
+			if (!tablesorted) {
+				$("#results").tablesorter();
+				tablesorted = true;
+			} else {
+				$("#results").trigger("update");
+			}
+		}
 		
 		function readTemplate(id, newClass) {
 			var template = $(id).detach();
@@ -40,39 +50,42 @@ $(function() {
 			return row;
 		}
 		
-		this.applySpotifyResponse = function(results) {
-			clearTable();
+		this.applySpotifyResponse = function(results, index) {
 			if (results.info.type == "track") {
-				spotifyTrack(results.track)
+				spotifyTrack(results.track, index)
 			}
 		}
 		
-		function spotifyTrack(track) {
-			var artists = ""; 
-			var artistquery = "";
-
-			$(track.artists).each(function(index) {
-				if (index > 0) {
-					artists += ", ";
-				}
-				if (this.href) {
-					artists += linkTemplate.format(this.href, this.name);
-				} else {
-					artists += this.name;
-				}
-				artistquery += this.name + " ";
-			});
-			
-			var isrc = spotify.id(track, "isrc");
-			
-			album = linkTemplate.format(track.album.href, track.album.name);
-	
+		function spotifyTrack(track, index) {		
+			var isrc = spotify.id(track, "isrc");		
 			var row = addRow();
-			row.find(".title").html(track.title);
-			row.find(".artists").html(artists);
-			row.find(".album").html(album);
 			
-			beatport.search(artistquery + track.name);
+			row.attr("id", isrc);
+			row.find(".index").html(index);
+			row.find(".title").html(linkFormat.format(track.href, track.name));
+			row.find(".album").html(linkFormat.format(track.album.href, track.album.name));
+			row.find(".popularity").html(track.popularity);
+			
+			formatter.applySpotifyArtistLinks(track.artists, row);
+			
+			beatport.search(scrubber.searchTitle(track.name, track.artists), isrc);
+		}	
+		
+		this.applyBeatportResponse = function(track, isrc) {	
+			var row = $("#" + isrc);
+
+			row.find(".title a").html(scrubber.scrubTitle(track.name));
+			row.find(".released").html(track.releaseDate);
+			row.find(".mix").html(scrubber.scrubMix(track.mixName));
+			row.find(".image").html("<img src=\"" + track.images.small.url + "\" />")
+			row.find(".bpm").html(track.bpm);
+			row.find(".length").html(track.length);
+
+			row.addClass("matched");
+			
+			formatter.applyGenres(track.genres, row);
+
+			sort();
 		}
 		
 		this.applySpotifyArtists = function(cell, artists) {
@@ -81,7 +94,7 @@ $(function() {
 				if (index > 0) {
 					cell.append(", ");
 				}
-				if (this.href) {
+				if (this.name != "Various Artists" && this.href) {
 					cell.append("<a href=\"{0}\">{1}</a>".format(this.href, this.name));
 				} else {
 					cell.append(this.name);
@@ -131,30 +144,20 @@ $(function() {
 					row.addClass("matched");
 				});
 			});
-		}	
-		
-		this.applyBeatportResponse = function(results, create) {
-			$(results).each(function(index){
-				if (this.type == "track") {
-					var row = $("#isrc-" + this.isrc);
-					if (row) {
-						formatter.applyBeatportTrack(this, row);
-					}
-				}
-			});
 		}
 		
 		this.applySpotifyArtistLinks = function(artists, row) {
-			var mixcell = row.find(".mix"); 
 			var artistcell = row.find(".artists");
 			artistcell.empty();
 			
 			$(artists).each(function(){
-				var aslink = "<a href=\"{0}\">{1}</a>".format(this.href, this.name);
-				if (artistcell.html() != "") {
-					artistcell.append(", ");
+				if (this.href && this.name != "Various Artists") {
+					var aslink = "<a href=\"{0}\">{1}</a>".format(this.href, this.name);
+					if (artistcell.html() != "") {
+						artistcell.append(", ");
+					}
+					artistcell.append(aslink);
 				}
-				artistcell.append(aslink);
 			});
 		}
 		
@@ -171,6 +174,15 @@ $(function() {
 					gcell.append(this.name);
 				}
 			});
+		}
+		
+		this.createPlaylist = function() {
+			var href = "";
+			$(".title a").each(function(){
+				if (href.length > 0) href += "\n";
+				href += this.href;
+			});
+			$("#playlist").attr("href", href);
 		}
 		
 	}
