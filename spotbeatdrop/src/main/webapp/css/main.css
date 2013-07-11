@@ -7,17 +7,21 @@ a {
 	color: #FFFFFF;
 }
 
-th {
+thead tr {
 	height: 25px;
 }
 
-tr {
+tbody tr {
 	height: 32px;
 }
 
 th.headerSortDown, th.headerSortUp, th:hover {
 	background-color: #9090FF;
 	color: #202020;	
+}
+
+.hidden {
+	display: none;
 }
 
 body {
@@ -64,6 +68,14 @@ td.released {
 
 .matched {
 	background-color: #303030;
+}
+
+.metercontainer {
+	border: 1px solid black;
+	background-color: #101010;
+}
+.meter {
+	height: 15px;
 }
 
 .template {

@@ -7,7 +7,7 @@ var Scrubber = function() {
 	
 	this.searchTitle = function(title, artists, mixname) {
 		if (!mixname || mixname.indexOf("Original") > -1) {
-			return (scrubber.lessCountries(artists[0].name) + " " + scrubber.lessFeatures(title)).toLowerCase(); 
+			return (scrubber.lessCountries(artists[0].name) + " " + scrubber.lessParenths(scrubber.lessDashes(scrubber.lessFeatures(title)))).toLowerCase(); 
 		
 		} else {
 			var artistquery = artists[0].name;
@@ -35,6 +35,10 @@ var Scrubber = function() {
 		} else {
 			return artist;
 		}
+	}
+	
+	this.lessParenths = function(title) {
+		return title.replace("(", "").replace(")", "");
 	}
 	
 	this.lessDashes = function(title) {

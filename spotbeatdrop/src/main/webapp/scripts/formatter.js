@@ -64,8 +64,7 @@ $(function() {
 			row.find(".index").html(index);
 			row.find(".title").html(linkFormat.format(track.href, track.name));
 			row.find(".album").html(linkFormat.format(track.album.href, track.album.name));
-			row.find(".popularity").html(track.popularity);
-			
+			formatter.applyPopularity(track.popularity, row);
 			formatter.applySpotifyArtistLinks(track.artists, row);
 			
 			beatport.search(scrubber.searchTitle(track.name, track.artists), isrc);
@@ -139,7 +138,7 @@ $(function() {
 				spotify.searchTrack(scrubber.searchTitle(this.name, this.artists, this.mixName), this.isrc, this.exclusive, function(response) {
 					row.find(".title").html(linkFormat.format(response.href, title));
 					row.find(".album").html(linkFormat.format(response.album.href, response.album.name));
-					row.find(".popularity").html(response.popularity);
+					formatter.applyPopularity(response.popularity, row);
 					formatter.applySpotifyArtistLinks(response.artists, row);
 					row.addClass("matched");
 				});
@@ -183,6 +182,16 @@ $(function() {
 				href += this.href;
 			});
 			$("#playlist").attr("href", href);
+		}
+		
+		this.applyPopularity = function(value, row) {
+			var intval = Math.floor(value * 100);
+			var cell = row.find(".popularity");
+			cell.find(".hidden").html(value);
+			cell.find(".meter").css({ 
+				"width": intval + "%", 
+				"background-color": "#{0}FF{0}".format(100 - intval) 
+			});
 		}
 		
 	}
